@@ -1,17 +1,17 @@
 const React = require('react');
 
-class NewMSg extends React.Component{
+class NewMsg extends React.Component{
     constructor(props){
         super(props);
         this.handleText = this.handleText.bind(this);
-        this.addMessage = this.handleMessage.bind(this);
-        this.setState({
+        this.addMessage = this.addMessage.bind(this);
+        this.state ={
             name:"",
             msg:""
-        });
+        };
        
     }
-    addMessage = (event) =>{
+    addMessage(event){
         event.preventDefault();
 
         //save state var to local
@@ -29,7 +29,7 @@ class NewMSg extends React.Component{
         //pass control to MsgBoard so it can make the API Call and update messages there 
         this.props.addMsgCallback({name: name, msg:msg});
     }
-    handleText = (event)=>{
+    handleText(event){
         if(event.target.id == 'name'){
             this.setState({
                 name: event.target.value
@@ -57,7 +57,7 @@ class NewMSg extends React.Component{
               </div>
               <div className="row">
                 <div className="col-3">
-                  <input id="name" type="text className="form-control"
+                  <input id="name" type="text" className="form-control"
                     placeholder="Your Name" value={this.state.name}
                     onChange={this.handleText}
                   />
