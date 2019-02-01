@@ -9,6 +9,9 @@ var indexRouter = require('./app_server/routes/app_router');
 
 var app = express();
 
+// mongodb connection via mongoose
+require('./api_server/db');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'app_server','views'));
 app.set('view engine', 'pug');
