@@ -28,7 +28,7 @@ class MsgBoard extends React.Component{
             throw Error(response.status + ': '+ response.statusText);
         return response;
     }
-    addMessage(){
+    addMessage(message){
         let msgs = this.state.messages;
 
         // add id attribute
