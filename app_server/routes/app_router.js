@@ -3,6 +3,6 @@ const app_router = express.Router();
 const msgController = require('../controllers/msg');
 
 // GET Home
-app_router.get('/',msgController.index);
+app_router.get('/',msgController.getMessages);
 
 module.exports = app_router; 
