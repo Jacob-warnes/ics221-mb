@@ -12,6 +12,8 @@ var app = express();
 // mongodb connection via mongoose
 require('./api_server/db');
 
+require("/api/v1/apiRouter");
+
 // view engine setup
 app.set('views', path.join(__dirname, 'app_server','views'));
 app.set('view engine', 'pug');
