@@ -11,7 +11,7 @@ class MsgBoard extends React.Component{
             messages:this.props.messages};
     }
     componentDidMount(){
-        fetch('http://localhost:3003/msgs')
+        fetch('http://localhost:3000/api/v1/msgs')
         .then(response => this.handleHTTPErrors(response))
         .then(response => response.json())
         .then(result=> {
@@ -29,7 +29,7 @@ class MsgBoard extends React.Component{
         return response;
     }
     addMessage(message){
-        let msgs = this.state.messages;
+        /*let msgs = this.state.messages;
 
         // add id attribute
         message.id = msgs.length;
@@ -38,10 +38,10 @@ class MsgBoard extends React.Component{
         // update state var
         this.setState({
             messages: msgs
-        });
+        }); */
 
         // update back-end data
-        fetch('http://localhost:3003/msgs', {
+        fetch('http://localhost:3000/api/v1/msgs', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -49,6 +49,13 @@ class MsgBoard extends React.Component{
             body: JSON.stringify(message)
         })
         .then(response=> this.handleHTTPErrors(response))
+        .then(result => result.json())
+        .then(result => {
+             this.setState({
+                messages:
+                 [result].concat(this.state.messages)
+            });
+        })
         .catch(error=> {
             console.log(error);
         });
