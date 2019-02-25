@@ -17,7 +17,7 @@ require("@babel/register")({
 });
 
 const getMessages = (req, res) => {
-    fetch('http://localhost:3003/msgs')
+    fetch('http://localhost:3000/api/v1/msgs')
     .then(response=> handleHTTPErrors(response))
     .then(result=> result.json())
     .then(result=> {
@@ -54,7 +54,7 @@ const renderIndex = (req,res,msgs) => {
         footer: ReactDOMServer.renderToString(Footer()),
         msgBoard: ReactDOMServer.renderToString(MsgBoard(
                                          {   messages: msgs})),
-        props:'<script>let messages='+ JSON.stringify(msgs.reverse()) + '</script>'
+        props:'<script>let messages='+ JSON.stringify(msgs) + '</script>'
     });
 };
 
