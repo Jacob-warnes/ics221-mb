@@ -11,10 +11,11 @@ class MsgBoard extends React.Component{
             messages:this.props.messages};
     }
     componentDidMount(){
-        fetch('http://localhost:3000/api/v1/msgs')
+        fetch(`${process.env.API_URL}/msgs`)
         .then(response => this.handleHTTPErrors(response))
         .then(response => response.json())
         .then(result=> {
+            console.log("URL =  "+`${process.env.API_URL}`);
             this.setState({
                 messages: result
             });
@@ -41,7 +42,7 @@ class MsgBoard extends React.Component{
         }); */
 
         // update back-end data
-        fetch('http://localhost:3000/api/v1/msgs', {
+        fetch(`${process.env.API_URL}/msgs`, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -51,6 +52,7 @@ class MsgBoard extends React.Component{
         .then(response=> this.handleHTTPErrors(response))
         .then(result => result.json())
         .then(result => {
+            console.log("URL =  "+`${process.env.API_URL}`);
              this.setState({
                 messages:
                  [result].concat(this.state.messages)

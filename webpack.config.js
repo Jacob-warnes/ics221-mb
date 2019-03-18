@@ -1,4 +1,5 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
  module.exports = {
    entry: path.join(__dirname, 'client_side', 'app.jsx'),
@@ -18,5 +19,8 @@ const path = require('path');
        }
      ]
    },
+   plugins: [
+    new Dotenv()
+  ],
    mode: process.env.NODE_ENV || 'development'
  }
