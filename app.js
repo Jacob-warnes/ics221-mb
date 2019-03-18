@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const passport = require('passport');
 
 var indexRouter = require('./app_server/routes/app_router');
 //var usersRouter = require('');
@@ -23,6 +24,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+//Lab 7
+app.use(passport.initialize());
 
 app.use('/', indexRouter);
 //app.use('/users', usersRouter);
