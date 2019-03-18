@@ -1,12 +1,13 @@
 const express = require('express');
 const api_router = express.Router();
+const passport = require('passport');
 
 const msgAPIController = require('../controllers/msg-api');
 const userAPIController = require('../controllers/user-api');
 
 api_router.route('/msgs')
 .get(msgAPIController.getAllMessagesOrderedByLastPosted)
-.post(msgAPIController.addNewMessage);
+.post(passport.authenticate('basic', { session: false }),msgAPIController.addNewMessage);
 
 //Is this right?
 api_router.post('/users', userAPIController.registerNewUser);
