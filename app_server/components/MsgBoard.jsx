@@ -1,14 +1,24 @@
 const React = require('react');
 const MsgList = require('./MsgList.jsx');
 const NewMsg = require('./NewMsg.jsx');
+const Login = require('./Login.jsx');
 
 
 class MsgBoard extends React.Component{
     constructor(props){
         super(props);
         this.addMessage = this.addMessage.bind(this);
+        this.login = this.login.bind(this);
         this.state ={
-            messages:this.props.messages};
+            messages:this.props.messages,
+            userCredntials: {
+                email:'',
+                password:''
+            },
+            loginForm: true,
+            loginAttempts: 3,
+            loginFail: false
+        };
     }
     componentDidMount(){
         fetch(`${process.env.API_URL}/msgs`)
@@ -40,12 +50,13 @@ class MsgBoard extends React.Component{
         this.setState({
             messages: msgs
         }); */
-
+        const basicString = this.state.userCredentials.email+':'+this.state.userCredentials.password;
         // update back-end data
         fetch(`${process.env.API_URL}/msgs`, {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + btoa(basicString)
             },
             body: JSON.stringify(message)
         })
@@ -62,13 +73,62 @@ class MsgBoard extends React.Component{
             console.log(error);
         });
     }
+    login(userCredentials) {
+
+        // userCredentials is passed in from Login Component
+        // For Basic Authentication it is username:password (but we're using email)
+        const basicString = userCredentials.email + ':' + userCredentials.password;
+     
+        fetch(`${process.env.API_URL}/users/login`, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Basic ' + btoa(basicString)
+          }
+        })
+        .then(response=> {
+          // No more login attempts, throw an error
+          if (this.state.loginAttempts === 0) throw 'locked out';
+     
+          // OK response, credentials accepted
+          if (response.status === 200) {
+            this.setState({
+              userCredentials: userCredentials,
+              loginForm: false,
+              loginFail: false
+            });
+          } else {
+            // Credentials are wrong
+            this.setState((state) => {
+              return ({
+                loginFail: true,
+                loginAttempts: state.loginAttempts - 1
+              });
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      }
     render(){
-    return(
-        <div>
-        <NewMsg addMsgCallback={this.addMessage} />
-        <MsgList messages={this.state.messages}/>
-        </div>
-    )
+        let form;
+
+        if (this.state.loginForm) {
+          form = <Login registerCallback={this.register}
+            loginCallback={this.login}
+            loginFail={this.state.loginFail}
+            loginAttempts={this.state.loginAttempts}
+          />
+        } else {
+          form = <NewMsg addMsgCallback={this.addMessage} />
+        }
+      
+        return (
+          <div>
+            {form}
+            <MsgList messages={this.state.messages} />
+          </div>
+        );
     }
 }
 

@@ -57,7 +57,7 @@ passport.use(new BasicStrategy(
     }
 )); 
 const loginUser = (req, res) => {
-    res.status(200).send('Successful API Login User GET Request');
+    res.status(200).json({"api-msg":"Successfully Authenticated"});
   }
 
 module.exports = {
