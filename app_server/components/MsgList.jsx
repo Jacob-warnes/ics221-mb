@@ -3,12 +3,13 @@ const React = require('react');
 const MsgList = (props) => {
     return(
         <table className="table table-striped table-bordered">
+         <tbody>
             <tr> 
                 <th scope="col" className="w-25">#</th> 
                 <th scope="col" className="w-25">Name</th> 
                 <th scope="col" className="w-50">Message</th> 
             </tr>
-            <tbody>
+           
                 {props.messages.map( (message,index)=>
                     <tr key={message._id}>
                     <td>{index+1}</td>

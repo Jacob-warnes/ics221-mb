@@ -21,7 +21,6 @@ class Login extends React.Component{
             });
 
         }
-        console.log(this.state);
 
     }
     login(event){
@@ -46,54 +45,59 @@ class Login extends React.Component{
 
         return(
             <div>
-            <div>
+            <div className="card w-50">
               <h4>Login to post a Message:</h4>
                 <form onSubmit={this.login}>
-                <div>
-                  <label>
-                    Email:
-                  </label>
-                  <div>
-                    <input
-                      id="email"
-                      type="email"
-                      onChange={this.handleText}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label>
-                    Enter Password:
-                  </label>
-                  <div>
-                    <input
-                      id="password"
-                      type="password"
-                      onChange={this.handleText}
-                    />
-                  </div>
-                </div>
-                <div>
-                    <div>
-                        <input type="submit" value="Login"></input>
+                <div className ="row mt-1">
+                    <div className="col-2">
+                        <label>
+                             Email:
+                        </label>
+                    </div>
+                    <div className="col-3">
+                            <input
+                            id="email"
+                            type="email"
+                            onChange={this.handleText}
+                            />
                     </div>
                 </div>
-               
+                <div className="row mt-1">
+                    <div className="col-2">
+                        <label>
+                            Enter Password:
+                        </label>
+                    </div>
+                    <div className="col-3">
+                        <input
+                        id="password"
+                        type="password"
+                        onChange={this.handleText}
+                        />
+                    </div>
+                </div>
+                <div className= "row mt-1">
+                        <div className="col-2">
+                        </div>
+                        <div className ="col-3">
+                            <input className="btn btn-primary" type="submit" value="Login"></input>
+                        </div>
+                </div>
                 
-              </form>
-              {loginFailText}
-              <div>
-                    <lable>
+                </form>
+                {loginFailText}
+                <div className ="row mt-2">
+                    <lable className="col-2">
                         Not registered?
                     </lable>
-                    <div>
-                        <button type="button" onClick ={this.register}>
+                    <div className="col-2">
+                        <button className="btn btn-primary" type="button" onClick ={this.register}>
                             Register
                         </button>
                     </div>
                 </div>
             </div>
-          </div>
+            </div>
         )
     }
 

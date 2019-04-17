@@ -2,6 +2,7 @@ const React = require('react');
 const MsgList = require('./MsgList.jsx');
 const NewMsg = require('./NewMsg.jsx');
 const Login = require('./Login.jsx');
+const Registration = require('../../client_side/Registration.jsx');
 
 
 class MsgBoard extends React.Component{
@@ -9,6 +10,8 @@ class MsgBoard extends React.Component{
         super(props);
         this.addMessage = this.addMessage.bind(this);
         this.login = this.login.bind(this);
+        this.register = this.register.bind(this);
+        this.addNewUser = this.addNewUser.bind(this);
         this.state ={
             messages:this.props.messages,
             userCredntials: {
@@ -17,7 +20,9 @@ class MsgBoard extends React.Component{
             },
             loginForm: true,
             loginAttempts: 3,
-            loginFail: false
+            loginFail: false,
+            registrationForm: false,
+            registrationFail: false
         };
     }
     componentDidMount(){
@@ -78,7 +83,6 @@ class MsgBoard extends React.Component{
         // userCredentials is passed in from Login Component
         // For Basic Authentication it is username:password (but we're using email)
         const basicString = userCredentials.email + ':' + userCredentials.password;
-     
         fetch(`${process.env.API_URL}/users/login`, {
           method: 'GET',
           headers: {
@@ -109,26 +113,80 @@ class MsgBoard extends React.Component{
         .catch(error => {
           console.log(error);
         })
-      }
-    render(){
-        let form;
+    }
+    register() {
+        this.setState({
+          registrationForm: true
+        });
+    }
+    addNewUser(userDetails) {
 
-        if (this.state.loginForm) {
-          form = <Login registerCallback={this.register}
-            loginCallback={this.login}
-            loginFail={this.state.loginFail}
-            loginAttempts={this.state.loginAttempts}
-          />
-        } else {
-          form = <NewMsg addMsgCallback={this.addMessage} />
+        fetch(`${process.env.API_URL}/users`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userDetails)
+        })
+        .then(response=> {
+          if (response.status === 201) {
+            // User successfully registered
+            // disable the Registration Form
+            this.setState({
+              registrationForm: false,
+              registrationFail: false
+            });
+          } else {
+            // Some Error or User already exists
+            this.setState({
+              registrationFail: true
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+    render(){
+        if (this.state.registrationForm) {
+            let failedRegistration;
+         
+            if (this.state.registrationFail) {
+              failedRegistration =
+                <p className="text-danger">
+                  User already Registered or Registration Error.
+                </p>
+            }
+         
+            return (
+              <div>
+                <Registration registerNewUserCallback={this.addNewUser}/>
+                {failedRegistration}
+              </div>
+            )
         }
-      
-        return (
-          <div>
-            {form}
-            <MsgList messages={this.state.messages} />
-          </div>
-        );
+
+
+        else{
+            let form;
+
+            if (this.state.loginForm) {
+            form = <Login registerCallback={this.register}
+                loginCallback={this.login}
+                loginFail={this.state.loginFail}
+                loginAttempts={this.state.loginAttempts}
+            />
+            } else {
+            form = <NewMsg addMsgCallback={this.addMessage} />
+            }
+        
+            return (
+            <div>
+                {form}
+                <MsgList messages={this.state.messages} />
+            </div>
+            );
+        }
     }
 }
 
