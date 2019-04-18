@@ -22,7 +22,9 @@ class MsgBoard extends React.Component{
             loginAttempts: 3,
             loginFail: false,
             registrationForm: false,
-            registrationFail: false
+            registrationFail: false,
+            userID:"",
+            userName:""
         };
     }
     componentDidMount(){
@@ -78,6 +80,9 @@ class MsgBoard extends React.Component{
             console.log(error);
         });
     }
+    deleteMessage(message){
+        console.log(message);
+    }
     login(userCredentials) {
 
         // userCredentials is passed in from Login Component
@@ -100,6 +105,7 @@ class MsgBoard extends React.Component{
               loginForm: false,
               loginFail: false
             });
+            return response; 
           } else {
             // Credentials are wrong
             this.setState((state) => {
@@ -109,6 +115,14 @@ class MsgBoard extends React.Component{
               });
             });
           }
+        })
+        .then(result => result.json())
+        .then(result => {
+            this.setState({
+                userID: result._id,
+                userName : result.username
+            });
+
         })
         .catch(error => {
           console.log(error);
@@ -169,7 +183,7 @@ class MsgBoard extends React.Component{
 
         else{
             let form;
-
+            let msgs;
             if (this.state.loginForm) {
             form = <Login registerCallback={this.register}
                 loginCallback={this.login}
@@ -177,13 +191,13 @@ class MsgBoard extends React.Component{
                 loginAttempts={this.state.loginAttempts}
             />
             } else {
-            form = <NewMsg addMsgCallback={this.addMessage} />
+            form = <NewMsg addMsgCallback={this.addMessage} userName={this.state.userName} />
             }
-        
+            msgs = <MsgList messages={this.state.messages} userName={this.state.userName}/>
             return (
             <div>
                 {form}
-                <MsgList messages={this.state.messages} />
+                {msgs}
             </div>
             );
         }

@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon -e js,jsx --exec \"node -r dotenv/config ./bin/www\"",
-    "build": "webpack"
+    "build": "webpack",
+    "dev_build": "webpack --watch"
   },
   "dependencies": {
     "bad-words": "^3.0.2",
