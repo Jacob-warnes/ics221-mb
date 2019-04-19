@@ -1,35 +1,21 @@
 const React = require('react');
 const MsgSingle = require('./MsgSingle.jsx');
-/*
-const MsgList2 = (props) => {
-    return(
-        <table className="table table-striped table-bordered">
-            <tr> 
-                <th scope="col" className="w-25">#</th> 
-                <th scope="col" className="w-25">Name</th> 
-                <th scope="col" className="w-50">Message</th> 
-            </tr>
-            <tbody>
-                {props.messages.map( (message,index)=>
-                     <MsgSingle id={message._id} message={message} index = {index+1} userName={props.userName}/>
-                    )}
-            </tbody>
-        </table>
+const DeleteAll = require('./DeleteAll.jsx');
 
-    );
-} */
 
 class MsgList extends React.Component{
     constructor(props){
         super(props);
+        this.editMsgCallBack = this.editMsgCallBack.bind(this);
         this.state={
-            messages:this.props.messages,
-            userName:this.props.userName
+            chosen:""
         }
     }
-    deleteMsgCallback(message){
-        console.log(message.id);
-    }
+   editMsgCallBack(id){
+    this.setState({
+        chosen:id
+    });
+   }
     render(){
         return(
             <table className="table table-striped table-bordered">
@@ -39,7 +25,7 @@ class MsgList extends React.Component{
                    <th scope="col" className="w-10">Name</th> 
                    <th scope="col" className="w-75">Message</th>
                    <th scope="col" className="w-5"></th>
-                   <th scope="col" className="w-5"></th> 
+                   <DeleteAll userName={this.props.userName} deleteAllMsgCallback={this.props.deleteAllMsgCallback}/>
                </tr>
             
                {this.props.messages.map( (message,index)=>
@@ -48,7 +34,11 @@ class MsgList extends React.Component{
                       message={message} 
                       index = {index+1} 
                       userName={this.props.userName} 
-                      deleteMsgCallback={this.deleteMsgCallback}/>
+                      deleteMsgCallback={this.props.deleteMsgCallback}
+                      editMsgCallBack={this.editMsgCallBack}
+                      saveMsgCallback={this.props.saveMsgCallback}
+                      chosen={this.state.chosen}
+                      />
                    
                )}
                 

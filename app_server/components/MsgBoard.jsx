@@ -12,6 +12,9 @@ class MsgBoard extends React.Component{
         this.login = this.login.bind(this);
         this.register = this.register.bind(this);
         this.addNewUser = this.addNewUser.bind(this);
+        this.deleteMsgCallback= this.deleteMsgCallback.bind(this);
+        this.saveMsgCallback = this.saveMsgCallback.bind(this);
+        this.deleteAllMsgCallback = this.deleteAllMsgCallback.bind(this);
         this.state ={
             messages:this.props.messages,
             userCredntials: {
@@ -47,16 +50,7 @@ class MsgBoard extends React.Component{
         return response;
     }
     addMessage(message){
-        /*let msgs = this.state.messages;
-
-        // add id attribute
-        message.id = msgs.length;
-        // append to array
-        msgs.push(message);
-        // update state var
-        this.setState({
-            messages: msgs
-        }); */
+    
         const basicString = this.state.userCredentials.email+':'+this.state.userCredentials.password;
         // update back-end data
         fetch(`${process.env.API_URL}/msgs`, {
@@ -70,7 +64,6 @@ class MsgBoard extends React.Component{
         .then(response=> this.handleHTTPErrors(response))
         .then(result => result.json())
         .then(result => {
-            console.log("URL =  "+`${process.env.API_URL}`);
              this.setState({
                 messages:
                  [result].concat(this.state.messages)
@@ -78,10 +71,90 @@ class MsgBoard extends React.Component{
         })
         .catch(error=> {
             console.log(error);
+            
         });
     }
-    deleteMessage(message){
-        console.log(message);
+    deleteAllMsgCallback(){
+        const basicString = this.state.userCredentials.email+':'+this.state.userCredentials.password;
+        fetch(`${process.env.API_URL}/msgs`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Basic ' + btoa(basicString)
+            }
+          })
+          .then(response => this.handleHTTPErrors(response))
+          .then(response=> {
+              // message was deleted
+            if (response.status === 200) {
+                this.setState({
+                    messages:[]
+                });
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+    }
+    deleteMsgCallback(message){
+        const basicString = this.state.userCredentials.email+':'+this.state.userCredentials.password;
+        fetch(`${process.env.API_URL}/msgs/${message._id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Basic ' + btoa(basicString)
+            }
+          })
+          .then(response => this.handleHTTPErrors(response))
+          .then(response=> {
+              // message was deleted
+            if (response.status === 200) {
+    
+            let newMessages = this.state.messages.filter( msg =>{
+                if(msg._id == message._id){
+                    return null;
+                }
+                return msg;
+            });
+            this.setState({
+                messages:newMessages
+            });
+        
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+    }
+    saveMsgCallback(message){
+        const basicString = this.state.userCredentials.email+':'+this.state.userCredentials.password;
+        fetch(`${process.env.API_URL}/msgs/${message._id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Basic ' + btoa(basicString)
+            },  body: JSON.stringify(message)
+          })
+          .then(response => this.handleHTTPErrors(response))
+          .then(response=> {
+              // message was deleted
+            if (response.status === 200) {
+                let newMessages = this.state.messages.filter( msg =>{
+                if(msg._id == message._id){
+                    msg.msg=message.msg;
+                    return msg
+                }
+                return msg;
+            });
+            this.setState({
+                messages:newMessages
+            });
+        
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
     }
     login(userCredentials) {
 
@@ -94,6 +167,7 @@ class MsgBoard extends React.Component{
             'Authorization': 'Basic ' + btoa(basicString)
           }
         })
+        .then(response => this.handleHTTPErrors(response))
         .then(response=> {
           // No more login attempts, throw an error
           if (this.state.loginAttempts === 0) throw 'locked out';
@@ -142,6 +216,7 @@ class MsgBoard extends React.Component{
           },
           body: JSON.stringify(userDetails)
         })
+        .then(response => this.handleHTTPErrors(response))
         .then(response=> {
           if (response.status === 201) {
             // User successfully registered
@@ -161,6 +236,7 @@ class MsgBoard extends React.Component{
           console.log(error);
         });
     }
+   
     render(){
         if (this.state.registrationForm) {
             let failedRegistration;
@@ -193,7 +269,9 @@ class MsgBoard extends React.Component{
             } else {
             form = <NewMsg addMsgCallback={this.addMessage} userName={this.state.userName} />
             }
-            msgs = <MsgList messages={this.state.messages} userName={this.state.userName}/>
+            msgs = <MsgList messages={this.state.messages} userName={this.state.userName}
+                     deleteMsgCallback={this.deleteMsgCallback} saveMsgCallback={this.saveMsgCallback}
+                     deleteAllMsgCallback={this.deleteAllMsgCallback}/>
             return (
             <div>
                 {form}

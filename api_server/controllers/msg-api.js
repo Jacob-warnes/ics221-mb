@@ -16,7 +16,7 @@ const getAllMessagesOrderedByLastPosted = (req, res) => {
 };
 //get a single message 
 const getSingleMessage = (req, res) => {
-  
+ 
   if (req.params && req.params.messageid) {
     messageModel
       .findById(req.params.messageid)
@@ -49,30 +49,48 @@ const getSingleMessage = (req, res) => {
 
 //change a messages contents 
 const editMessage = (req,res) =>{
-  
-
-  if (userOwns(req,res)) {
-    messageModel
-      .findOneAndUpdate({_id:req.params.messageid}, {$set:{msg:req.body.msg}}, {new:true})
-      .exec( (err, message) => {
-        // error in executing function
-        if (err) {
-          res.status(400).json(err);
-          console.log("error");
+  console.log("params");
+  console.log(req.params);
+  if (req.params && req.params.messageid) {
+    //find message in db
+    messageModel.findById(req.params.messageid, 'name', (err, message) =>{
+      console.log(message);
+      if(err || message == null){
+        res.status(404).json({
+          "api-msg":"messageid not found"});
           return;
-        }
+      }
+      //does message have same owner as the person who made the request 
+      if(message.name == req.user.username){
 
-        // could execute, but didn't find message
-        if (!message) {
-          res.status(404).json({
-            "api-msg": "messageid not found"
+        //upadte message to new content 
+        messageModel
+          .findOneAndUpdate({_id:req.params.messageid}, {$set:{msg:req.body.msg}}, {new:true})
+          .exec( (err, message) => {
+            // error in executing function
+            if (err) {
+              res.status(400).json(err);
+              console.log("error");
+              return;
+            }
+
+            // could execute, but didn't find message
+            if (!message) {
+              res.status(404).json({
+                "api-msg": "messageid not found"
+              });
+              return;
+            }
+
+            // found message
+            res.status(200).json(message);
           });
-          return;
         }
-
-        // found message
-        res.status(200).json(message);
-      });
+        else{
+          res.status(401).json({
+            "api-msg":"Message not owned by user"});
+        }
+    });
   } else {
       // must have a message id
       res.status(404).json({
@@ -83,28 +101,46 @@ const editMessage = (req,res) =>{
 
 const deleteMessage = (req,res) =>{
   
-  if (userOwns(req,res)) {
-    messageModel
-      .findOneAndRemove({_id:req.params.messageid})
-      .exec( (err, message) => {
-        // error in executing function
-        if (err) {
-          res.status(400).json(err);
-          console.log("error");
+  if (req.params && req.params.messageid) {
+    //find message in db
+    messageModel.findById(req.params.messageid, 'name', (err, message) =>{
+      //if no message found
+      if(err || message==null){
+        res.status(404).json({
+          "api-msg":"messageid not found"});
           return;
-        }
+      }
+       //does message have same owner as the person who made the request 
+       if(message.name == req.user.username){
+        //remove message  
+        messageModel
+            .findOneAndRemove({_id:req.params.messageid})
+            .exec( (err, message) => {
+              // error in executing function
+              if (err) {
+                res.status(400).json(err);
+                console.log("error");
+                return;
+              }
 
-        // could execute, but didn't find message
-        if (!message) {
-          res.status(404).json({
-            "api-msg": "messageid not found"
-          });
-          return;
-        }
+              // could execute, but didn't find message
+              if (!message) {
+                res.status(404).json({
+                  "api-msg": "messageid not found"
+                });
+                return;
+              }
 
-        // found message
-        res.status(200).json(message);
+              // found message
+              res.status(200).json(message);
+            });
+          }
+        else{
+          res.status(401).json({
+            "api-msg":"Message not owned by user"});
+        }
       });
+        
   } else {
       // must have a message id
       res.status(404).json({
@@ -113,14 +149,6 @@ const deleteMessage = (req,res) =>{
   }
 };
 
-//method for determining if user owns the message they are trying to edit
-const userOwns = (req,res) =>{
-  console.log(req.user._id);
-  if(req.params && req.params.messageid){
-      return true;
-  }
-  return false;
-}
 
 
 // POST Request Handler
@@ -136,15 +164,21 @@ const addNewMessage = (req, res) => {
 };
 
 const deleteAll =(req,res)=>{
-  messageModel.remove()
-  .exec((err,message) => {
-      if(err){
-        res.status(400).json(err);
-        console.log(err);
-        return;
-      }
-      res.status(200).json(message);
-  }); 
+ 
+  if(req.user.username == process.env.ADMIN){
+    messageModel.remove()
+    .exec((err,message) => {
+        if(err){
+          res.status(400).json(err);
+          console.log(err);
+          return;
+        }
+        res.status(200).json(message);
+    });
+  }
+  else{
+    res.status(401).json({"api-msg":"Not an admin user"});
+  } 
 };
 
 module.exports = {
