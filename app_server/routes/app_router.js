@@ -1,8 +1,8 @@
-const express = require('express');
+const express = require("express");
 const app_router = express.Router();
-const msgController = require('../controllers/msg');
+const msgController = require("../controllers/msg");
 
 // GET Home
-app_router.get('/',msgController.getMessages);
+app_router.get("/", msgController.getMessages);
 
-module.exports = app_router; 
+module.exports = app_router;

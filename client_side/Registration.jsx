@@ -1,27 +1,27 @@
-'use strict';
+"use strict";
 /*************************************************
-* Registration Component for ICS 221 Lab 7
-* ----------------------------------------
-*
-* Author: Jason Cumiskey
-*
-* Date: March 10, 2019
-*
-* Version: 0.1
-*
-* This Component is a registration form to be used
-* with Lab 7 in ICS 221.
-*
-* Notes:
-* - This Component is fairly complex and should
-* be broken down into several smaller components.
-* - I'll add it to my to-do list.
-* - Tests should be written for it (TDD)
-*
-**************************************************/
-const React = require('react');
-const rules = require('./rules');
-const Filter = require('bad-words');
+ * Registration Component for ICS 221 Lab 7
+ * ----------------------------------------
+ *
+ * Author: Jason Cumiskey
+ *
+ * Date: March 10, 2019
+ *
+ * Version: 0.1
+ *
+ * This Component is a registration form to be used
+ * with Lab 7 in ICS 221.
+ *
+ * Notes:
+ * - This Component is fairly complex and should
+ * be broken down into several smaller components.
+ * - I'll add it to my to-do list.
+ * - Tests should be written for it (TDD)
+ *
+ **************************************************/
+const React = require("react");
+const rules = require("./rules");
+const Filter = require("bad-words");
 
 class Registration extends React.Component {
   constructor(props) {
@@ -32,10 +32,10 @@ class Registration extends React.Component {
     this.checkPassword = this.checkPassword.bind(this);
     this.checkEmail = this.checkEmail.bind(this);
     this.state = {
-      email: '',
-      user: '',
-      pass: '',
-      rpass: '',
+      email: "",
+      user: "",
+      pass: "",
+      rpass: "",
       strength: {},
       allFieldsOk: {
         email: false,
@@ -45,7 +45,7 @@ class Registration extends React.Component {
       }
     };
   }
-  
+
   /* This method checks the password the user is entering.
      It builds a JS object of the rules as they pass and saves
      it as a state variable called strength. If the length of strength
@@ -54,7 +54,7 @@ class Registration extends React.Component {
   */
   checkPassword(event) {
     const password = event.target.value;
-    
+
     this.setState({
       pass: password
     });
@@ -64,13 +64,14 @@ class Registration extends React.Component {
        conforms to that rule
     */
     let strength = {};
-    for (const [ ruleName, rule ] of Object.entries(rules)) {
+    for (const [ruleName, rule] of Object.entries(rules)) {
       if (rule.pattern.test(password)) {
         strength[ruleName] = true;
       }
     }
 
-    this.setState({
+    this.setState(
+      {
         strength: strength
       },
       () => {
@@ -80,10 +81,9 @@ class Registration extends React.Component {
          object. If so, then set fields.pass to true.
         */
         let fields = Object.assign(this.state.allFieldsOk);
-        
+
         if (
-          Object.keys(this.state.strength).length === 
-            Object.keys(rules).length
+          Object.keys(this.state.strength).length === Object.keys(rules).length
         ) {
           fields.pass = true;
         } else {
@@ -95,12 +95,12 @@ class Registration extends React.Component {
            then changes the password to match/unmatch
            it
         */
-        if ( password === this.state.rpass) {
+        if (password === this.state.rpass) {
           fields.rpass = true;
         } else {
           fields.rpass = false;
         }
-        
+
         this.setState({
           allFieldsOk: fields
         });
@@ -108,7 +108,6 @@ class Registration extends React.Component {
     );
   }
 
-  
   /* This method checks the email address entered against a regular expression.
      If the email passes, then fields.email is set to true and the allFieldsOk
      state variable is updated with the new value.
@@ -117,26 +116,29 @@ class Registration extends React.Component {
     const emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     let email = event.target.value;
-    
+
     // make it all lowercase
     email = email.toLowerCase();
-    
-    let fields = Object.assign(this.state.allFieldsOk);  
-    
-    this.setState({
-      email: email
-    }, () => {
-      if (emailRegEx.test(email)) {
-        // email passes regex
-        fields.email = true;
-      } else {
-        fields.email = false;
-      }
 
-      this.setState({
-        allFieldsOk: fields
-      });
-    });
+    let fields = Object.assign(this.state.allFieldsOk);
+
+    this.setState(
+      {
+        email: email
+      },
+      () => {
+        if (emailRegEx.test(email)) {
+          // email passes regex
+          fields.email = true;
+        } else {
+          fields.email = false;
+        }
+
+        this.setState({
+          allFieldsOk: fields
+        });
+      }
+    );
   }
 
   /* This handles the username entered. It uses the 'bad-words' module
@@ -146,30 +148,33 @@ class Registration extends React.Component {
   */
   handleUsername(event) {
     let user = event.target.value;
-    let filter = new Filter({ placeHolder: ' ' });
+    let filter = new Filter({ placeHolder: " " });
     let fields = Object.assign(this.state.allFieldsOk);
 
     // any bad words are replaced with spaces
     user = filter.clean(user);
     // before checking length, trim whitespace
     user = user.trim();
-    
-    this.setState({
-      user: user
-    }, () => {
-      /* Simply check that the Username
+
+    this.setState(
+      {
+        user: user
+      },
+      () => {
+        /* Simply check that the Username
          is between 3 and 20 characters
       */
-      if (user.length > 2 && user.length < 21) {
-        fields.user = true;
-      } else {
-        fields.user = false;
-      }
+        if (user.length > 2 && user.length < 21) {
+          fields.user = true;
+        } else {
+          fields.user = false;
+        }
 
-      this.setState({
-        allFieldsOk: fields
-      });
-    });
+        this.setState({
+          allFieldsOk: fields
+        });
+      }
+    );
   }
 
   /* This handles the confirm password element. It checks
@@ -178,20 +183,23 @@ class Registration extends React.Component {
   */
   handleConfirmPassword(event) {
     let fields = Object.assign(this.state.allFieldsOk);
-      
-    this.setState({
-      rpass: event.target.value
-    }, () => {
-      if (this.state.rpass === this.state.pass) {
-        fields.rpass = true;
-      } else {
-        fields.rpass = false;
-      }
 
-      this.setState({
-        allFieldsOk: fields
-      });
-    });
+    this.setState(
+      {
+        rpass: event.target.value
+      },
+      () => {
+        if (this.state.rpass === this.state.pass) {
+          fields.rpass = true;
+        } else {
+          fields.rpass = false;
+        }
+
+        this.setState({
+          allFieldsOk: fields
+        });
+      }
+    );
   }
 
   /* We're doing nothing here other than to pass Control to
@@ -200,7 +208,7 @@ class Registration extends React.Component {
   */
   registerUser(event) {
     event.preventDefault();
-    
+
     if (this.canRegister()) {
       // pass control to MsgBoard so it can make the API Call
       this.props.registerNewUserCallback({
@@ -224,20 +232,21 @@ class Registration extends React.Component {
     /* This builds a new array with each rule for the password
        and whether it has been completed by the user.
        This will be used to strike out rules they have done.
-    */ 
-    let processedRules = Object.keys(rules).map( (rule, index) => {
+    */
+
+    let processedRules = Object.keys(rules).map((rule, index) => {
       return {
         key: index,
         rule: rules[rule],
         isCompleted: this.state.strength[rule] || false
-      }
+      };
     });
 
     return (
       <div className="card col-8 my-3">
         <div className="card-body">
           <h4 className="card-title">Register:</h4>
-            <form onSubmit={this.registerUser}>
+          <form onSubmit={this.registerUser}>
             <div className="form-group row">
               <label
                 htmlFor="email"
@@ -257,7 +266,9 @@ class Registration extends React.Component {
               </div>
             </div>
             <div className="col-9 offset-3">
-              <p className="text-danger">{ !this.state.allFieldsOk.email ? 'invalid email address' : '' }</p>    
+              <p className="text-danger">
+                {!this.state.allFieldsOk.email ? "invalid email address" : ""}
+              </p>
             </div>
             <div className="form-group row">
               <label htmlFor="user" className="col-3 col-form-label text-right">
@@ -275,7 +286,9 @@ class Registration extends React.Component {
               </div>
             </div>
             <div className="col-9 offset-3">
-              <p className="text-danger">{ !this.state.allFieldsOk.user ? 'invalid username' : '' }</p>    
+              <p className="text-danger">
+                {!this.state.allFieldsOk.user ? "invalid username" : ""}
+              </p>
             </div>
             <div className="form-group row">
               <label
@@ -298,22 +311,21 @@ class Registration extends React.Component {
             <div className="row">
               <div className="col-9 offset-3">
                 <ul>
-                  {processedRules.map( processedRule => {
-                      if (processedRule.isCompleted) {
-                        return (
-                          <li key={processedRule.key}>
-                            <strike>{processedRule.rule.message}</strike>
-                          </li>
-                        )
-                      } else {
-                        return (
-                          <li key={processedRule.key}>
-                            {processedRule.rule.message}
-                          </li>
-                        )
-                      }
+                  {processedRules.map(processedRule => {
+                    if (processedRule.isCompleted) {
+                      return (
+                        <li key={processedRule.key}>
+                          <strike>{processedRule.rule.message}</strike>
+                        </li>
+                      );
+                    } else {
+                      return (
+                        <li key={processedRule.key}>
+                          {processedRule.rule.message}
+                        </li>
+                      );
                     }
-                  )}
+                  })}
                 </ul>
               </div>
             </div>
@@ -336,15 +348,17 @@ class Registration extends React.Component {
               </div>
             </div>
             <div className="col-9 offset-3">
-              <p className="text-danger">{ !this.state.allFieldsOk.rpass ? 'passwords don\'t match' : '' }</p>    
+              <p className="text-danger">
+                {!this.state.allFieldsOk.rpass ? "passwords don't match" : ""}
+              </p>
             </div>
             <div className="form-group row">
               <div className="mx-auto">
                 <button
                   type="submit"
                   className={
-                    'btn btn-lg btn-primary ' +
-                    (this.canRegister() ? '' : 'disabled')
+                    "btn btn-lg btn-primary " +
+                    (this.canRegister() ? "" : "disabled")
                   }
                 >
                   Register

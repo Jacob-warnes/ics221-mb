@@ -1,41 +1,39 @@
+const React = require("react");
+const ReactDOMServer = require("react-dom/server");
 
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
+require("es6-promise").polyfill();
+require("isomorphic-fetch");
 
-require('es6-promise').polyfill();
-require('isomorphic-fetch');
-
-function handleHTTPErrors(response){
-    if(!response.ok) 
-        throw Error(response.status + ': '+ response.statusText);
-    return response;
+function handleHTTPErrors(response) {
+  if (!response.ok) throw Error(response.status + ": " + response.statusText);
+  return response;
 }
 
-//Transpile and add the React Component 
+//Transpile and add the React Component
 require("@babel/register")({
-    presets: [ '@babel/preset-react']
+  presets: ["@babel/preset-react"]
 });
 
 const getMessages = (req, res) => {
-    fetch(`${process.env.API_URL}/msgs`)
-    .then(response=> handleHTTPErrors(response))
-    .then(result=> result.json())
-    .then(result=> {
+  fetch(`${process.env.API_URL}/msgs`)
+    .then(response => handleHTTPErrors(response))
+    .then(result => result.json())
+    .then(result => {
       if (!(result instanceof Array)) {
-        console.error('API lookup error');
+        console.error("API lookup error");
         result = [];
       } else {
         renderIndex(req, res, result);
       }
     })
-    .catch(error=> {
+    .catch(error => {
       console.log(error);
     });
-  }
+};
 
-const Header = React.createFactory(require('../components/Header.jsx'));
-const Footer = React.createFactory(require('../components/Footer.jsx'));
-const MsgBoard = React.createFactory(require('../components/MsgBoard.jsx'));
+const Header = React.createFactory(require("../components/Header.jsx"));
+const Footer = React.createFactory(require("../components/Footer.jsx"));
+const MsgBoard = React.createFactory(require("../components/MsgBoard.jsx"));
 
 //temp hard coded data
 /*const msgs = [
@@ -47,19 +45,16 @@ const MsgBoard = React.createFactory(require('../components/MsgBoard.jsx'));
     {id:6 , name: 'Sarah', msg: 'I heart react'}
 ]; */
 //index handler
-const renderIndex = (req,res,msgs) => {
-    res.render('index',{
-        title: 'ICS 221 Universal JS Msg Board',
-        header: ReactDOMServer.renderToString(Header()),
-        footer: ReactDOMServer.renderToString(Footer()),
-        msgBoard: ReactDOMServer.renderToString(MsgBoard(
-                                         {   messages: msgs})),
-        props:'<script>let messages='+ JSON.stringify(msgs) + '</script>'
-    });
+const renderIndex = (req, res, msgs) => {
+  res.render("index", {
+    title: "ICS 221 Universal JS Msg Board",
+    header: ReactDOMServer.renderToString(Header()),
+    footer: ReactDOMServer.renderToString(Footer()),
+    msgBoard: ReactDOMServer.renderToString(MsgBoard({ messages: msgs })),
+    props: "<script>let messages=" + JSON.stringify(msgs) + "</script>"
+  });
 };
-
 
 module.exports = {
-    getMessages
+  getMessages
 };
-
