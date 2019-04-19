@@ -68,6 +68,7 @@ deploy_app_to_dokku:
   environment: production
   variables:
     API_URL: https://${CI_PROJECT_NAME}.${DEPLOY_SRV}/api/v1
+    ADMIN: Admin
     
   tags:
     # use a deploy runner
