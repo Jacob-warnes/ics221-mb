@@ -3,9 +3,14 @@
   "version": "0.0.4",
   "private": true,
   "scripts": {
-    "start": "nodemon -e js,jsx --exec \"node -r dotenv/config ./bin/www\"",
+    "start":"node ./bin/www",
+    "dev": "nodemon -e js,jsx --exec \"node -r dotenv/config ./bin/www\"",
     "build": "webpack",
     "dev_build": "webpack --watch"
+  },
+  "engines":{
+    "node":"~8.10.0",
+    "npm":"~6.4.1"
   },
   "dependencies": {
     "bad-words": "^3.0.2",
