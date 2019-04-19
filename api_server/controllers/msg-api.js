@@ -164,7 +164,7 @@ const addNewMessage = (req, res) => {
 };
 
 const deleteAll = (req, res) => {
-  if (req.user.username == process.env.ADMIN) {
+  if (req.user.username === "Admin") {
     messageModel.remove().exec((err, message) => {
       if (err) {
         res.status(400).json(err);

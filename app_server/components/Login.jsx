@@ -56,7 +56,12 @@ class Login extends React.Component {
                 <label>Email:</label>
               </div>
               <div className="col-3">
-                <input id="email" type="email" onChange={this.handleText} />
+                <input
+                  id="email"
+                  type="email"
+                  onChange={this.handleText}
+                  value={this.state.email}
+                />
               </div>
             </div>
             <div className="row mt-1">
@@ -68,6 +73,7 @@ class Login extends React.Component {
                   id="password"
                   type="password"
                   onChange={this.handleText}
+                  value={this.state.password}
                 />
               </div>
             </div>

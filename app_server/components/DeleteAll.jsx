@@ -9,9 +9,7 @@ class DeleteAll extends React.Component {
     this.props.deleteAllMsgCallback();
   }
   render() {
-    console.log("userName = " + this.props.userName);
-    console.log("ADMIN = " + process.env.ADMIN);
-    if (this.props.userName == process.env.ADMIN) {
+    if (this.props.userName == "Admin") {
       return (
         <th scope="col" className="w-5">
           <button className="btn-danger" type="button" onClick={this.deletAll}>

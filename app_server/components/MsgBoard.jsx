@@ -171,7 +171,6 @@ class MsgBoard extends React.Component {
         Authorization: "Basic " + btoa(basicString)
       }
     })
-      .then(response => this.handleHTTPErrors(response))
       .then(response => {
         // No more login attempts, throw an error
         if (this.state.loginAttempts === 0) throw "locked out";
