@@ -46,12 +46,9 @@ const getSingleMessage = (req, res) => {
 
 //change a messages contents
 const editMessage = (req, res) => {
-  console.log("params");
-  console.log(req.params);
   if (req.params && req.params.messageid) {
     //find message in db
     messageModel.findById(req.params.messageid, "name", (err, message) => {
-      console.log(message);
       if (err || message == null) {
         res.status(404).json({
           "api-msg": "messageid not found"

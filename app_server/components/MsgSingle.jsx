@@ -8,12 +8,18 @@ class MsgSingle extends React.Component {
     this.saveMsg = this.saveMsg.bind(this);
     this.cancleMsg = this.cancleMsg.bind(this);
     this.handleText = this.handleText.bind(this);
+    this.state ={
+      msg:this.props.message.msg
+    }
   }
   deleteMsg(event) {
     var id = event.target.value;
     this.props.deleteMsgCallback({ _id: id });
   }
   editMsg(event) {
+    this.setState({
+      msg:this.props.message.msg
+    })
     this.props.editMsgCallBack(event.target.value);
   }
   saveMsg(event) {
@@ -26,6 +32,7 @@ class MsgSingle extends React.Component {
     this.props.editMsgCallBack("");
   }
   cancleMsg(event) {
+    this.props.message.msg = this.state.msg;
     this.props.editMsgCallBack("");
   }
   handleText(event) {
